@@ -148,15 +148,23 @@ python3 {baseDir}/scripts/qas_client.py add-task '{"taskname": "Black Mirror", "
    - If filenames already match the preferred format → use `".*"` (save as-is)
    - If filenames need renaming → write regex `pattern` to capture episode/season info, and `replace` with magic variables to produce the preferred format
    - Example: source `01.mp4`, preferred `{TASKNAME}.S01E01.mp4` → `"pattern": "^(\\d+)\\.mp4$", "replace": "{TASKNAME}.S01E\\1.{EXT}"`
-4. **Add task**: `python3 {baseDir}/scripts/qas_client.py add-task '{"taskname": "MediaName", "shareurl": "https://pan.quark.cn/s/xxx#/list/share/fid", "savepath": "<user_habit_path>", "pattern": "<pattern>", "replace": "<replace>"}'`
+4. **Execute**:
+   - **Completed series** (taskname contains `X集全`, `全X集`, `完结`, `全集`) → `run-task` (one-time transfer, no subscription)
+   - **Ongoing series** → `add-task` (subscription, auto-check for updates)
+   ```bash
+   # One-time (completed)
+   python3 {baseDir}/scripts/qas_client.py run-task '{"taskname": "MediaName", "shareurl": "...", "savepath": "...", "pattern": "..."}'
+   # Subscription (ongoing)
+   python3 {baseDir}/scripts/qas_client.py add-task '{"taskname": "MediaName", "shareurl": "...", "savepath": "...", "pattern": "..."}'
+   ```
    - `savepath` and `pattern` must follow the user's existing habits recorded in TOOLS.md
-
-**Tip:** If the search result `taskname` contains keywords like `全X集`, `完结`, `全集`, it's a completed series — run directly with `run-task <json>` (one-time transfer) instead of `add-task` (subscription). Still do step 3 to determine the correct `pattern` & `replace`.
 
 ### Check Invalid Tasks
 1. **Get tasks**: `python3 {baseDir}/scripts/qas_client.py data`
-2. **Check for `shareurl_ban` key in tasklist**
-3. **Replace invalid URLs and remove `shareurl_ban` key**
+2. **Identify invalid tasks**: tasks with `shareurl_ban` key in tasklist
+3. **Find replacement**: `python3 {baseDir}/scripts/qas_client.py search "<taskname>" -d` to get a new valid shareurl
+4. **Update task**: `python3 {baseDir}/scripts/qas_client.py update-task "TaskName" '{"shareurl": "https://pan.quark.cn/s/new", "shareurl_ban": ""}'`
+   - Sets new `shareurl` and clears `shareurl_ban`
 
 ### Delete Task
 ```bash
