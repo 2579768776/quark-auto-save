@@ -61,18 +61,17 @@ After the user sets the token, the following analysis must be performed and reco
 Use `{baseDir}/scripts/qas_client.py` for all operations:
 
 ```bash
-python3 {baseDir}/scripts/qas_client.py data                            # Get all config & tasks
+python3 {baseDir}/scripts/qas_client.py data                           # Get all config & tasks
 python3 {baseDir}/scripts/qas_client.py search "query" [-d]            # Search resources
-python3 {baseDir}/scripts/qas_client.py detail "<shareurl>"            # Get share detail
+python3 {baseDir}/scripts/qas_client.py detail "<shareurl>" [-a]       # Get share detail (-a for all files)
 python3 {baseDir}/scripts/qas_client.py savepath "/path"               # Check savepath
+python3 {baseDir}/scripts/qas_client.py delete "fid"                   # Delete file
 python3 {baseDir}/scripts/qas_client.py add-task '{"taskname": "Name", ...}' # Add task
-python3 {baseDir}/scripts/qas_client.py run-task [taskname|json]            # Run task(s)
-python3 {baseDir}/scripts/qas_client.py update-task "Name" '{"savepath": "/new"}' # Update task
-python3 {baseDir}/scripts/qas_client.py delete-task "TaskName"         # Delete task by name
+python3 {baseDir}/scripts/qas_client.py run-task [taskname|json]             # Run task(s)
+python3 {baseDir}/scripts/qas_client.py update-task "TaskName" '{"savepath": "/new"}' # Update task
+python3 {baseDir}/scripts/qas_client.py delete-task "TaskName"         # Delete task
 python3 {baseDir}/scripts/qas_client.py update '{"key": "value"}'      # Update config
 ```
-
-
 
 ## Task Schema
 
