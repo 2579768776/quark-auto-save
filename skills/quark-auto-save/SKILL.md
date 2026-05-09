@@ -22,8 +22,8 @@ Manage quark-auto-save(QAS, 夸克自动转存, 夸克转存, 夸克订阅) task
 When user send message like `https://pan.quark.cn/s/***`, get detail, add a QAS task.
 
 **WIKI:**
-- RegexRename: https://github.com/Cp0204/quark-auto-save/wiki/%E6%AD%A3%E5%88%99%E5%A4%84%E7%90%86%E6%95%99%E7%A8%8B
-- MagicRegex: https://github.com/Cp0204/quark-auto-save/wiki/%E9%AD%94%E6%B3%95%E5%8C%B9%E9%85%8D%E5%92%8C%E9%AD%94%E6%B3%95%E5%8F%98%E9%87%8F
+- RegexRename: https://github.com/Cp0204/quark-auto-save/wiki/正则处理教程
+- MagicRegex: https://github.com/Cp0204/quark-auto-save/wiki/魔法匹配和魔法变量
 
 ## ⚠️ Prerequisites
 
@@ -54,6 +54,7 @@ After the user sets the token, the following analysis must be performed and reco
    - Anime Directory: /video/anime/{name}
    - Movie Directory: /video/movie/{name}
    - Naming Pattern: $TV_MAGIC (e.g., 都是她的错.S01E01.mp4)
+   ...
    ```
 
 ## Python Client
@@ -161,9 +162,9 @@ python3 {baseDir}/scripts/qas_client.py add-task '{"taskname": "Black Mirror", "
 ### Check Invalid Tasks
 1. **Get tasks**: `python3 {baseDir}/scripts/qas_client.py data`
 2. **Identify invalid tasks**: tasks with `shareurl_ban` key in tasklist
-3. **Find replacement**: `python3 {baseDir}/scripts/qas_client.py search "<taskname>" -d` to get a new valid shareurl
-4. **Update task**: `python3 {baseDir}/scripts/qas_client.py update-task "TaskName" '{"shareurl": "https://pan.quark.cn/s/new", "shareurl_ban": ""}'`
-   - Sets new `shareurl` and clears `shareurl_ban`
+3. **Find replacement**: `python3 {baseDir}/scripts/qas_client.py search "<taskname>" -d` to get a new shareurl
+4. **Verify**: `python3 {baseDir}/scripts/qas_client.py detail "<new_shareurl>"` — check not banned, file list matches
+5. **Update task**: `python3 {baseDir}/scripts/qas_client.py update-task "TaskName" '{"shareurl": "<verified_url>", "shareurl_ban": ""}'`
 
 ### Delete Task
 ```bash
@@ -185,8 +186,8 @@ python3 {baseDir}/scripts/qas_client.py update '{"crontab": "0 9 * * *"}'
 
 ### Run Tasks
 ```bash
-python3 {baseDir}/scripts/qas_client.py run-task                    # All tasks
-python3 {baseDir}/scripts/qas_client.py run-task "TaskName"       # Specific task
+python3 {baseDir}/scripts/qas_client.py run-task             # All tasks
+python3 {baseDir}/scripts/qas_client.py run-task "TaskName"  # Specific task
 python3 {baseDir}/scripts/qas_client.py run-task '{"taskname": "Test", ...}'  # Direct task
 ```
 
