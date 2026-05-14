@@ -165,13 +165,20 @@ python3 {baseDir}/scripts/qas_client.py add-task '{"taskname": "Black Mirror", "
    python3 {baseDir}/scripts/qas_client.py add-task '{"taskname": "MediaName", "shareurl": "...", "savepath": "...", "pattern": "...", "replace": "..."}'
    ```
    - `savepath` and (`pattern`+`replace`) MUST follow the user's existing habits recorded in TOOLS.md
+   - **After add-task**: trigger `run-task "TaskName"` immediately to execute the first save.
 
 ### Check Invalid Tasks
 1. **Get tasks**: `python3 {baseDir}/scripts/qas_client.py get-config`
 2. **Identify invalid tasks**: tasks with `shareurl_ban` key in tasklist
-3. **Find replacement**: `python3 {baseDir}/scripts/qas_client.py search "<taskname>" -d` to get a new shareurl
-4. **Verify**: `python3 {baseDir}/scripts/qas_client.py detail "<new_shareurl>"` — check not banned, file list matches
-5. **Update task**: `python3 {baseDir}/scripts/qas_client.py update-task "TaskName" '{"shareurl": "<verified_url>", "shareurl_ban": ""}'`
+3. **Check existing files**: `python3 {baseDir}/scripts/qas_client.py check-path "<task_savepath>"` — record the naming format and the **latest episode number** (e.g., E24) of already-saved files
+4. **Find replacement**: `python3 {baseDir}/scripts/qas_client.py search "<taskname>" -d` to get candidate shareurls
+5. **Verify & select shareurl**:
+   - `python3 {baseDir}/scripts/qas_client.py get-share "<candidate_shareurl>" -a` — check file list
+   - **Step 1 — Pick by video format**: prefer the shareurl whose file extension matches the existing files (e.g., existing `.mkv` → pick `.mkv` source, existing `.mp4` → pick `.mp4` source)
+   - **Step 2 — Prefer newer episodes**: among candidates with matching format, pick the one whose episode range extends **beyond the latest episode** (e.g., existing up to E24 → pick shareurl containing E25+)
+   - **Step 3 — Ensure naming consistency**: analyze the source filenames against the existing file naming format. Update `pattern`/`replace` so the **final renamed result** matches the existing naming. If source already matches, keep `pattern`/`replace` unchanged.
+6. **Update task**: `python3 {baseDir}/scripts/qas_client.py update-task "TaskName" '{"shareurl": "<verified_url>", "shareurl_ban": "", "pattern": "...", "replace": "..."}'` — include `pattern`/`replace` if they were adjusted
+7. **Trigger run**: `python3 {baseDir}/scripts/qas_client.py run-task "TaskName"` — execute immediately after fixing the link.
 
 ### Delete Task
 ```bash
