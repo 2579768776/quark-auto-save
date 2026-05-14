@@ -472,13 +472,11 @@ def _path_to_fid(path):
     path = re.sub(r"/+", "/", path)
     if path == "/":
         return 0
-    fid = None
     file_list = _get_file_list(None, os.path.dirname(path))
     for file in file_list["list"]:
         if file["file_name"] == os.path.basename(path):
-            fid = file["fid"]
-            break
-    return fid
+            return file["fid"]
+    raise FileNotFoundError(f"未找到文件: {path}")
 
 
 @app.route("/delete_file", methods=["POST"])
