@@ -8,8 +8,8 @@ Usage:
     python3 qas_client.py search <query> [-d]                # Search resources
     python3 qas_client.py get-share <shareurl> [-a]          # Get share detail
     python3 qas_client.py check-path <path>                  # Check savepath
-    python3 qas_client.py delete-file <fid>                  # Delete cloud file
-    python3 qas_client.py rename-file <fid> <file_name>      # Rename cloud file
+    python3 qas_client.py delete-file <path>                 # Delete cloud file
+    python3 qas_client.py rename-file <path> <file_name>     # Rename cloud file
     python3 qas_client.py add-task <task.json>               # Add task
     python3 qas_client.py run-task [taskname|json]           # Run task(s)
     python3 qas_client.py update-task <name> <json>          # Update task
@@ -348,18 +348,18 @@ def cmd_update_task(taskname: str, update_json: str):
         fail(get_error(update_result))
 
 
-def cmd_delete_file(fid: str):
-    """Delete cloud file"""
-    result = post("/delete_file", {"fid": fid})
+def cmd_delete_file(path: str):
+    """Delete cloud file by path"""
+    result = post("/delete_file", {"path": path})
     if result.get("success"):
         ok()
     else:
         fail(get_error(result))
 
 
-def cmd_rename_file(fid: str, file_name: str):
-    """Rename cloud file"""
-    result = post("/rename_file", {"fid": fid, "file_name": file_name})
+def cmd_rename_file(path: str, file_name: str):
+    """Rename cloud file by path"""
+    result = post("/rename_file", {"path": path, "file_name": file_name})
     if result.get("success"):
         ok()
     else:
@@ -435,7 +435,7 @@ def main():
         cmd_check_path(args.args[0])
     elif args.command == "delete-file":
         if not args.args:
-            fail("Usage: delete-file <fid>")
+            fail("Usage: delete-file <path>")
             sys.exit(1)
         cmd_delete_file(args.args[0])
     elif args.command == "delete-task":
@@ -445,7 +445,7 @@ def main():
         cmd_delete_task(args.args[0])
     elif args.command == "rename-file":
         if len(args.args) < 2:
-            fail("Usage: rename-file <fid> <file_name>")
+            fail("Usage: rename-file <path> <file_name>")
             sys.exit(1)
         cmd_rename_file(args.args[0], args.args[1])
     elif args.command == "update-config":
