@@ -40,16 +40,23 @@ After the user sets the token, the following analysis must be performed and reco
 
 2. **Analyze Saving Habits**:
    - Extract `savepath` directory patterns from existing tasks (e.g., `/video/tv/`, `/video/anime/`, `/video/movie/`)
-   - Observe file naming format from `pattern` and `replace` fields — e.g., `{TASKNAME}.S01E01.mp4` vs `01.mp4`
+   - For `pattern` + `replace`: deduce the **final renamed filename** format by applying the regex to a sample source file (e.g., `01.mp4` → `Black Mirror.S01E01.mp4`). Record the result pattern, not the raw regex.
    - Note which `magic_regex` key the user prefers (e.g. `$TV_MAGIC`)
 
 3. **Record to TOOLS.md**:
+   The following is just an example, not specific values, everything is analyzed based on user configuration.
    ```markdown
    ### quark-auto-save habits
-   - TV Series Directory: /video/tv/{name}
-   - Anime Directory: /video/anime/{name}
-   - Movie Directory: /video/movie/{name}
-   - Naming Pattern: $TV_MAGIC (e.g., 都是她的错.S01E01.mp4)
+   #### TV Series
+      - Directory: `/video/tv/{name}`
+      - naming preferences: `$TV_MAGIC `(e.g., {TASKNAME}.{SXX}E{E}.{EXT})
+   #### Anime
+      - Directory: `/video/anime/{name}`
+      - naming preferences: `Rick and Morty.S01E01.mp4`
+   #### Movie
+      - Directory: `/video/movie/{name} {year}`
+      - naming preferences: `{TASKNAME}.mp4`
+   -
    ...
    ```
 
@@ -145,20 +152,19 @@ python3 {baseDir}/scripts/qas_client.py add-task '{"taskname": "Black Mirror", "
 2. **Verify & Get Details**: `python3 {baseDir}/scripts/qas_client.py get-share "<shareurl>"`
    - Check if `shareurl` is valid (not banned)
    - Check file list for video files and select the subdir
-3. **Analyze `pattern` & `replace`**: Compare the share's filenames with the user's preferred format (from TOOLS.md).
-   - If filenames already match the preferred format → use `".*"` (save as-is)
-   - If filenames need renaming → write regex `pattern` to capture episode/season info, and `replace` with magic variables to produce the preferred format
-   - Example: source `01.mp4`, preferred `{TASKNAME}.S01E01.mp4` → `"pattern": "^(\\d+)\\.mp4$", "replace": "{TASKNAME}.S01E\\1.{EXT}"`
+3. **Analyze `pattern` & `replace`**: Ensure the **final renamed filename** matches the naming preferences in TOOLS.md.
+   - Source already matches → `"pattern": ".*"`, `replace: ""` (save as-is)
+   - Needs renaming → design `pattern` to capture groups, `replace` with magic variables. E.g., source `01.mp4`, TOOLS.md says `Black Mirror.S01E01.mp4` → `"pattern": "^(\\d+)\\.mp4$", "replace": "{TASKNAME}.S01E\\1.{EXT}"`
 4. **Execute**:
    - **One-time** (completed series, taskname contains `X集全`, `全X集`, `完结`, `全集`, single movie) → `run-task`
    - **Subscription** (ongoing series that gets new episodes) → `add-task`
    ```bash
    # One-time (completed)
-   python3 {baseDir}/scripts/qas_client.py run-task '{"taskname": "MediaName", "shareurl": "...", "savepath": "...", "pattern": "..."}'
+   python3 {baseDir}/scripts/qas_client.py run-task '{"taskname": "MediaName", "shareurl": "...", "savepath": "...", "pattern": "...", "replace": "..."}'
    # Subscription (ongoing)
-   python3 {baseDir}/scripts/qas_client.py add-task '{"taskname": "MediaName", "shareurl": "...", "savepath": "...", "pattern": "..."}'
+   python3 {baseDir}/scripts/qas_client.py add-task '{"taskname": "MediaName", "shareurl": "...", "savepath": "...", "pattern": "...", "replace": "..."}'
    ```
-   - `savepath` and `pattern` must follow the user's existing habits recorded in TOOLS.md
+   - `savepath` and (`pattern`+`replace`) MUST follow the user's existing habits recorded in TOOLS.md
 
 ### Check Invalid Tasks
 1. **Get tasks**: `python3 {baseDir}/scripts/qas_client.py get-config`
@@ -200,4 +206,3 @@ All commands output text. First word indicates status:
 - **OK {json}** — success with data (JSON on same line)
 - **ERROR: message** — failure
 - **run-task**: `OK` on first line, followed by log lines
-
