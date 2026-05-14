@@ -62,8 +62,8 @@ python3 {baseDir}/scripts/qas_client.py get-config                              
 python3 {baseDir}/scripts/qas_client.py search "query" [-d]                           # Search resources
 python3 {baseDir}/scripts/qas_client.py get-share "<shareurl>" [-a]                   # Get share detail (-a for all files)
 python3 {baseDir}/scripts/qas_client.py check-path "/path"                            # Check savepath
-python3 {baseDir}/scripts/qas_client.py delete-file "<fid>"                           # Delete cloud file
-python3 {baseDir}/scripts/qas_client.py rename-file "<fid>" "new_name"                # Rename cloud file
+python3 {baseDir}/scripts/qas_client.py delete-file "/path/to/file"                   # Delete cloud file
+python3 {baseDir}/scripts/qas_client.py rename-file "/path/to/file" "new_name"        # Rename cloud file
 python3 {baseDir}/scripts/qas_client.py add-task '{"taskname": "Name", ...}'          # Add task
 python3 {baseDir}/scripts/qas_client.py run-task [taskname|json]                      # Run task(s)
 python3 {baseDir}/scripts/qas_client.py update-task "TaskName" '{"savepath": "/new"}' # Update task
