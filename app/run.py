@@ -490,6 +490,7 @@ def delete_file():
         if fid:
             account = Quark(config_data["cookie"][0])
             response = account.delete([fid])
+            response["success"] = response["code"] == 0
             return jsonify(response)
         else:
             raise ValueError("缺失必要字段: fid 或 path")
@@ -507,6 +508,7 @@ def rename_file():
         if fid and file_name:
             account = Quark(config_data["cookie"][0])
             response = account.rename(fid, file_name)
+            response["success"] = response["code"] == 0
             return jsonify(response)
         else:
             raise ValueError("缺失必要字段: fid, file_name")
