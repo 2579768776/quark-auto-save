@@ -149,8 +149,8 @@ python3 {baseDir}/scripts/qas_client.py add-task '{"taskname": "Black Mirror", "
    - If filenames need renaming → write regex `pattern` to capture episode/season info, and `replace` with magic variables to produce the preferred format
    - Example: source `01.mp4`, preferred `{TASKNAME}.S01E01.mp4` → `"pattern": "^(\\d+)\\.mp4$", "replace": "{TASKNAME}.S01E\\1.{EXT}"`
 4. **Execute**:
-   - **Completed series** (taskname contains `X集全`, `全X集`, `完结`, `全集`) → `run-task` (one-time transfer, no subscription)
-   - **Ongoing series** → `add-task` (subscription, auto-check for updates)
+   - **One-time** (completed series, taskname contains `X集全`, `全X集`, `完结`, `全集`, single movie) → `run-task`
+   - **Subscription** (ongoing series that gets new episodes) → `add-task`
    ```bash
    # One-time (completed)
    python3 {baseDir}/scripts/qas_client.py run-task '{"taskname": "MediaName", "shareurl": "...", "savepath": "...", "pattern": "..."}'
