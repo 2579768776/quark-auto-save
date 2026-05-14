@@ -21,10 +21,6 @@ Manage quark-auto-save(QAS, 夸克自动转存, 夸克转存, 夸克订阅) task
 
 When user send message like `https://pan.quark.cn/s/***`, get detail, add a QAS task.
 
-**WIKI:**
-- RegexRename: https://github.com/Cp0204/quark-auto-save/wiki/正则处理教程
-- MagicRegex: https://github.com/Cp0204/quark-auto-save/wiki/魔法匹配和魔法变量
-
 ## ⚠️ Prerequisites
 
 **Env:**
@@ -39,7 +35,7 @@ After the user sets the token, the following analysis must be performed and reco
 
 1. **Get Current Configuration**:
    ```bash
-   python3 {baseDir}/scripts/qas_client.py data
+   python3 {baseDir}/scripts/qas_client.py get-config
    ```
 
 2. **Analyze Saving Habits**:
@@ -62,16 +58,17 @@ After the user sets the token, the following analysis must be performed and reco
 Use `{baseDir}/scripts/qas_client.py` for all operations:
 
 ```bash
-python3 {baseDir}/scripts/qas_client.py data                           # Get all config & tasks
-python3 {baseDir}/scripts/qas_client.py search "query" [-d]            # Search resources
-python3 {baseDir}/scripts/qas_client.py detail "<shareurl>" [-a]       # Get share detail (-a for all files)
-python3 {baseDir}/scripts/qas_client.py savepath "/path"               # Check savepath
-python3 {baseDir}/scripts/qas_client.py delete "fid"                   # Delete file
-python3 {baseDir}/scripts/qas_client.py add-task '{"taskname": "Name", ...}' # Add task
-python3 {baseDir}/scripts/qas_client.py run-task [taskname|json]             # Run task(s)
+python3 {baseDir}/scripts/qas_client.py get-config                                    # Get all config & tasks
+python3 {baseDir}/scripts/qas_client.py search "query" [-d]                           # Search resources
+python3 {baseDir}/scripts/qas_client.py get-share "<shareurl>" [-a]                   # Get share detail (-a for all files)
+python3 {baseDir}/scripts/qas_client.py check-path "/path"                            # Check savepath
+python3 {baseDir}/scripts/qas_client.py delete-file "<fid>"                           # Delete cloud file
+python3 {baseDir}/scripts/qas_client.py rename-file "<fid>" "new_name"                # Rename cloud file
+python3 {baseDir}/scripts/qas_client.py add-task '{"taskname": "Name", ...}'          # Add task
+python3 {baseDir}/scripts/qas_client.py run-task [taskname|json]                      # Run task(s)
 python3 {baseDir}/scripts/qas_client.py update-task "TaskName" '{"savepath": "/new"}' # Update task
-python3 {baseDir}/scripts/qas_client.py delete-task "TaskName"         # Delete task
-python3 {baseDir}/scripts/qas_client.py update '{"key": "value"}'      # Update config
+python3 {baseDir}/scripts/qas_client.py delete-task "TaskName"                        # Delete task
+python3 {baseDir}/scripts/qas_client.py update-config '{"key": "value"}'              # Update config
 ```
 
 ## Task Schema
@@ -109,7 +106,7 @@ python3 {baseDir}/scripts/qas_client.py update '{"key": "value"}'      # Update 
 
 **Get subdir info:**
 ```bash
-python3 {baseDir}/scripts/qas_client.py detail "<shareurl>"
+python3 {baseDir}/scripts/qas_client.py get-share "<shareurl>"
 ```
 
 **Add task example:**
@@ -118,6 +115,10 @@ python3 {baseDir}/scripts/qas_client.py add-task '{"taskname": "Black Mirror", "
 ```
 
 ## `pattern` & `replace`
+
+**WIKI:**
+- RegexRename: https://github.com/Cp0204/quark-auto-save/wiki/正则处理教程
+- MagicRegex: https://github.com/Cp0204/quark-auto-save/wiki/魔法匹配和魔法变量
 
 | Pattern | Replace | Result |
 |---|---|---|
@@ -141,7 +142,7 @@ python3 {baseDir}/scripts/qas_client.py add-task '{"taskname": "Black Mirror", "
 
 ### Add New Task
 1. **Search**: `python3 {baseDir}/scripts/qas_client.py search "MediaName" -d`
-2. **Verify & Get Details**: `python3 {baseDir}/scripts/qas_client.py detail "<shareurl>"`
+2. **Verify & Get Details**: `python3 {baseDir}/scripts/qas_client.py get-share "<shareurl>"`
    - Check if `shareurl` is valid (not banned)
    - Check file list for video files and select the subdir
 3. **Analyze `pattern` & `replace`**: Compare the share's filenames with the user's preferred format (from TOOLS.md).
@@ -160,7 +161,7 @@ python3 {baseDir}/scripts/qas_client.py add-task '{"taskname": "Black Mirror", "
    - `savepath` and `pattern` must follow the user's existing habits recorded in TOOLS.md
 
 ### Check Invalid Tasks
-1. **Get tasks**: `python3 {baseDir}/scripts/qas_client.py data`
+1. **Get tasks**: `python3 {baseDir}/scripts/qas_client.py get-config`
 2. **Identify invalid tasks**: tasks with `shareurl_ban` key in tasklist
 3. **Find replacement**: `python3 {baseDir}/scripts/qas_client.py search "<taskname>" -d` to get a new shareurl
 4. **Verify**: `python3 {baseDir}/scripts/qas_client.py detail "<new_shareurl>"` — check not banned, file list matches
@@ -181,7 +182,7 @@ python3 {baseDir}/scripts/qas_client.py update-task "TaskName" '{"pattern": "$TV
 ### Update Config
 ```bash
 # Update global config (allowed keys: cookie, crontab, push_config, tasklist, magic_regex, plugins, source)
-python3 {baseDir}/scripts/qas_client.py update '{"crontab": "0 9 * * *"}'
+python3 {baseDir}/scripts/qas_client.py update-config '{"crontab": "0 9 * * *"}'
 ```
 
 ### Run Tasks
